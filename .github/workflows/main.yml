@@ -59,4 +59,4 @@ jobs:
         - name: Deploy Terraform Infrastructure
           run: |
             cd ./infrastructure/deploy
-            sh deploy.sh lambda
+            sudo sh deploy.sh lambda
