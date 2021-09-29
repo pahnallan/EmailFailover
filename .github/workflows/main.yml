@@ -61,4 +61,4 @@ jobs:
             cd ./infrastructure/deploy
             ls
             chmod +x ./deploy.sh
-            sh deploy.sh lambda
+            //sh deploy.sh lambda
