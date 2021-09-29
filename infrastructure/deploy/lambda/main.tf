@@ -153,7 +153,7 @@ resource "aws_lambda_function" "email_service_lambda_function" {
       SnailGunUrlEndpoint     = "https://bw-interviews.herokuapp.com/snailgun/emails",
       SpendGridApiKey         = var.spend_grid_api_key
       SnailGunApiKey          = var.snail_gun_api_key
-      ActiveEmailProvider     = "SpendGrid",
+      ActiveEmailProvider     = "SnailGun",
     }
   }
 }
