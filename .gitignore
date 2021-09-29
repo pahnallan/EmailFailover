@@ -35,3 +35,6 @@ obj/
 
 # Ignore the credential file containing the API keys
 credentials.txt
+
+# Ignore PyCharm config files
+.idea/

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Amazon.Lambda.Core;
@@ -43,13 +44,19 @@ namespace EmailFailOverLambda
         /// <param name="evnt"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task FunctionHandler(SQSEvent evnt, ILambdaContext context)
+        public async Task<EmailApiResponse> FunctionHandler(SQSEvent evnt, ILambdaContext context)
         {
             // Limiting the messages to just one in the API
             foreach(var message in evnt.Records)
             {
                 await ProcessMessageAsync(message, context);
             }
+
+            var response = new EmailApiResponse
+            {
+                Id = evnt.Records.FirstOrDefault()?.MessageId
+            };
+            return response;
         }
 
         // No need to explicitly delete the message from the queue as AWS automatically deletes it when the lambda returns success
