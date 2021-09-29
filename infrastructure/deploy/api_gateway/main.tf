@@ -14,29 +14,26 @@ variable "region" {
 
 variable "environment" {
   description       = "Environment suffix to deploy resources to"
-  type              = "string"
+  default           = "dev"
 }
 
 variable "product" {
   description       = "Name of the product which these resources belong to"
-  type              = "string"
   default           = "email-service"
 }
 
 variable "owner" {
   description       = "Name of who team/person who owns this product/service"
-  type              = "string"
   default           = "Allan Pahn"
 }
 
 variable "openapi_spec" {
   description       = "Name of the OpenAPI spec file"
-  type              = "string"
+  default           = "swagger.yaml"
 }
 
 variable "sqs_policy_file_name" {
   description       = "Name of the file which contains the policy template for allowing the API Gateway access to SQS"
-  type              = "string"
   default           = "policies/api-gateway-sqs-policy.json"
 }
 
@@ -64,7 +61,7 @@ locals {
   api_policy_attachment_name = lower(join("-", [var.product, "sqs-policy-attachment", var.environment]))
   parsed_spec       = yamldecode(file("./${var.openapi_spec}"))
 
-  email_sqs_arn                 = "arn:aws:sqs:${var.region}}:${data.aws_caller_identity.current.account_id}:${lower(join("-", [var.product, "queue", var.environment]))}"
+  email_sqs_arn                 = "arn:aws:sqs:${var.region}:${data.aws_caller_identity.current.account_id}:${lower(join("-", [var.product, "queue", var.environment]))}"
   tags                        = {
     "Product"    = var.product,
     "Owner"      = var.owner
