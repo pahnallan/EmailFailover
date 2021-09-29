@@ -28,7 +28,7 @@ variable "owner" {
 
 variable "file_name" {
   description       = "Path to the zipped package containing the lambda runtime code"
-  default           = "EmailServiceLambdaD.zip"
+  default           = "EmailServiceLambda.zip"
 }
 
 variable "lambda_sqs_policy_file_name" {
