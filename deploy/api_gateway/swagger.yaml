@@ -44,9 +44,9 @@
         "x-amazon-apigateway-request-validator" : "Validate body, query string parameters, and headers",
         "x-amazon-apigateway-integration" : {
           "type" : "aws",
-          "credentials" : "arn:aws:iam::060623537052:role/acct-managed/email-failover-api-gateway-dev-role",
+          "credentials" : "${iam_role_arn}",
           "httpMethod" : "PUT",
-          "uri" : "arn:aws:apigateway:us-west-2:sqs:path/060623537052/email-failover-queue-dev-01",
+          "uri" : "arn:aws:apigateway:${region}:sqs:path/${account_id}/${email_sqs_name}",
           "responses" : {
             "default" : {
               "statusCode" : "200"
