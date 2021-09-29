@@ -62,6 +62,7 @@ locals {
   parsed_spec       = yamldecode(file("./${var.openapi_spec}"))
 
   email_sqs_arn                 = "arn:aws:sqs:${var.region}:${data.aws_caller_identity.current.account_id}:${lower(join("-", [var.product, "queue", var.environment]))}"
+  email_sqs_name                  = lower(join("-", [var.product, "queue", var.environment]))
   tags                        = {
     "Product"    = var.product,
     "Owner"      = var.owner
@@ -74,7 +75,6 @@ locals {
 ####################################################################################################
 resource "aws_iam_role" "iam_role" {
   name                     = local.api_role_name
-  type                     = "Amazon API Gateway"
   assume_role_policy        = jsonencode({
       Version = "2012-10-17"
       Statement = [
@@ -114,7 +114,7 @@ resource "aws_api_gateway_rest_api" "email_service_gateway_rest_api" {
     region                      = var.region,
     account_id                  = data.aws_caller_identity.current.account_id,
     iam_role_arn                = aws_iam_role.iam_role.arn,
-    email_sqs_arn               = local.email_sqs_arn
+    email_sqs_name               = local.email_sqs_name
   }), "/title:.*${local.parsed_spec.info.title}.*/", "title: '${local.api_name}'")
   endpoint_configuration {
     types = ["EDGE"] # TODO: switch this to regional when implementing a region based fail-over
