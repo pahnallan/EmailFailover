@@ -1,4 +1,4 @@
-name: Destroy Email Service Lambda
+name: Destroy Email Service API Gateway
 
 on:
   workflow_dispatch:
@@ -27,4 +27,4 @@ jobs:
           working-directory: ./infrastructure/deploy
           run: |
             chmod +x destroy.sh
-            sh destroy.sh lambda
+            sh destroy.sh api_gateway

@@ -1,16 +1,21 @@
-name: Destroy Email Service Lambda
+name: Deploy Email Service SQS
 
 on:
+#   push:
+#     branches: [ master ]
+#   pull_request:
+#     branches: [ master ]
+
   workflow_dispatch:
 
-jobs:          
-  destroy:
+jobs:
+  deploy:
       runs-on: ubuntu-latest
-      
+
       steps:
         - name: Checkout
           uses: actions/checkout@v2
-       
+
         - name: Configure AWS Credentials
           uses: aws-actions/configure-aws-credentials@v1
           with:
@@ -23,8 +28,8 @@ jobs:
           with:
             terraform_version: 0.14.6
 
-        - name: Destroy Lambda
+        - name: Deploy Terraform Infrastructure
           working-directory: ./infrastructure/deploy
           run: |
-            chmod +x destroy.sh
-            sh destroy.sh lambda
+            chmod +x deploy.sh
+            sh deploy.sh sqs
