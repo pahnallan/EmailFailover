@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Amazon.Lambda.Core;
 using EmailFailOverLambda.Models;
 using Newtonsoft.Json;
 using RestSharp;
@@ -22,14 +23,16 @@ namespace EmailFailOverLambda.Service
         }
 
         // TODO: Change return to email api response
-        public async Task<IRestResponse> SendEmailAsync(IEmailApiRequest emailApiRequest)
+        public async Task<IRestResponse> SendEmailAsync(IEmailApiRequest emailApiRequest, ILambdaContext context)
         {
             var request = new RestRequest("", Method.POST, DataFormat.Json);
             var requestBody = EmailMapper.MapEmailApiRequest(emailApiRequest);
+            context.Logger.LogLine($"Sending request with body {JsonConvert.SerializeObject(requestBody)}");
             request.AddParameter("application/json", JsonConvert.SerializeObject(requestBody), ParameterType.RequestBody);
             request.AddHeader("X-Api-Key", ApiKey);
 
             var response = await RestClient.ExecutePostAsync(request);
+            context.Logger.LogLine($"Received response with where IsSuccessful = {response.IsSuccessful}");
 
             return response;
         }

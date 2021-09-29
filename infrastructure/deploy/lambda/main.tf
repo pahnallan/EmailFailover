@@ -1,5 +1,6 @@
 terraform {
   required_version = ">= 0.14"
+  backend s3 {}
 }
 
 ####################################################################################################
@@ -55,6 +56,14 @@ variable "memory_size" {
   default           = 128
 }
 
+variable "spend_grid_api_key" {
+  description       = "API Key to access spend grid endpoint"
+}
+
+variable "snail_gun_api_key" {
+  description       = "API Key to access spend grid endpoint"
+}
+
 ####################################################################################################
 # Terraform Existing Data Resources Reference
 ####################################################################################################
@@ -77,7 +86,7 @@ locals {
   lambda_policy_attachment_name = lower(join("-", [var.product, "sqs-policy-attachment", var.environment]))
 
   email_sqs_arn                 = "arn:aws:sqs:${var.region}:${data.aws_caller_identity.current.account_id}:${lower(join("-", [var.product, "queue", var.environment]))}"
-  tags                        = {
+  tags                          = {
     "Product"     = var.product,
     "Owner"       = var.owner,
     "Environment" = var.environment
@@ -118,17 +127,44 @@ resource "aws_iam_policy_attachment" "api_gateway_iam_role_sqs_policy_attachment
   policy_arn                    = aws_iam_policy.lambda_sqs_access_policy.arn
 }
 
+resource "aws_iam_role_policy_attachment" "api_gateway_iam_role_basic_lambda_policy_attachment" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  role       = aws_iam_role.email_service_iam_role.name
+}
+
 ####################################################################################################
 # Email Service Lambda
 ####################################################################################################
 resource "aws_lambda_function" "email_service_lambda_function" {
   filename                    = var.file_name
+  source_code_hash            = filemd5(var.file_name)
   function_name               = local.function_name
   role                        = aws_iam_role.email_service_iam_role.arn
   handler                     = var.handler_name
   runtime                     = var.runtime
   timeout                     = var.timeout
   memory_size                 = var.memory_size
+
+  environment {
+    variables = {
+      SpendGridUrlEndpoint    = "https://bw-interviews.herokuapp.com/spendgrid/send_email",
+      SnailGunUrlEndpoint     = "https://bw-interviews.herokuapp.com/snailgun/emails",
+      SpendGridApiKey         = var.spend_grid_api_key
+      SnailGunApiKey          = var.snail_gun_api_key
+      ActiveEmailProvider     = "SpendGrid",
+    }
+  }
 }
 
+resource "aws_lambda_event_source_mapping" "example" {
+  event_source_arn = local.email_sqs_arn
+  function_name    = aws_lambda_function.email_service_lambda_function.arn
+}
 
+####################################################################################################
+# Email Service CloudWatch Logging
+####################################################################################################
+//resource "aws_cloudwatch_log_group" "yada" {
+//  name                        = "Yada"
+//  tags                        = local.tags
+//}

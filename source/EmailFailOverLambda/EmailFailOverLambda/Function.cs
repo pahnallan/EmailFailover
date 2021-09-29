@@ -65,9 +65,9 @@ namespace EmailFailOverLambda
             try
             {
                 var requestMessage = JsonConvert.DeserializeObject<EmailApiRequest>(message.Body);
-                EmailService emailService = GetEmailService(_activeEmailProvider);
+                EmailService emailService = GetEmailService(_activeEmailProvider, context);
 
-                var response = emailService.SendEmailAsync(requestMessage).Result;
+                var response = await emailService.SendEmailAsync(requestMessage, context);
                 if (!response.IsSuccessful)
                 {
                     throw response.ErrorException;
@@ -75,7 +75,6 @@ namespace EmailFailOverLambda
 
 
                 context.Logger.LogLine($"{response.StatusCode},{response.Content}");
-                await Task.CompletedTask;
             }
             catch (Exception e)
             {
@@ -84,9 +83,10 @@ namespace EmailFailOverLambda
             }
         }
 
-        private EmailService GetEmailService(string emailProvider)
+        private EmailService GetEmailService(string emailProvider, ILambdaContext context)
         {
             Enum.TryParse(Environment.GetEnvironmentVariable("ActiveEmailProvider"), out EmailProviders activeEmailProvider);
+            context.Logger.LogLine($"Retrieving {activeEmailProvider} email client...");
             switch (activeEmailProvider)
             {
                 case EmailProviders.SpendGrid:

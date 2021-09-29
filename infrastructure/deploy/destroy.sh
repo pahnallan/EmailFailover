@@ -14,8 +14,5 @@ terraform -v
 # Run Terraform Init
 terraform init -backend-config="bucket=allan-tf-state-bucket" -backend-config="region=us-west-2" -backend-config="key=email-service/$1.tfstate" -backend=true -force-copy -get=true -input=false
 
-# Run Terraform Plan
-terraform plan
-
 # Run Terraform Apply
 terraform destroy -auto-approve

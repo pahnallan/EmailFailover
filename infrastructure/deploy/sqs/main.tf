@@ -1,10 +1,6 @@
 terraform {
   required_version = ">= 0.14"
-  backend "s3" {
-    bucket = "allan-tf-state-bucket"
-    key    = "email-service/sqs.tfstate"
-    region = "us-west-2"
-  }
+  backend "s3" { }
 }
 
 ####################################################################################################

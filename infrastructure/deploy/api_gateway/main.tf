@@ -1,5 +1,6 @@
 terraform {
   required_version = ">= 0.14"
+  backend "s3" { }
 }
 
 ####################################################################################################
@@ -152,8 +153,10 @@ resource "aws_api_gateway_usage_plan" "usage_plan" {
 
   api_stages {
     api_id = aws_api_gateway_rest_api.email_service_gateway_rest_api.id
-    stage  = var.stage_name
+    stage  = aws_api_gateway_stage.email_service_gateway_stage.stage_name
   }
+
+  #depends_on = [aws_api_gateway_rest_api.email_service_gateway_rest_api, ]
 }
 
 resource "aws_api_gateway_usage_plan_key" "plan_key" {
