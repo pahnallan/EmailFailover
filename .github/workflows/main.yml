@@ -20,17 +20,17 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
-      - uses: actions/checkout@v2
-#       - name: DotNet Setup
-#       - uses: actions/setup-dotnet@v1.8.2
+        uses: actions/checkout@v2
+      - name: DotNet Setup
+        uses: actions/setup-dotnet@v1.8.2
 
-#       - name: Publish Email Service Lambda Source Code 
-#       - run: |
-#           dotnet publish -p "./source/EmailFailOverLambda/EmailFailOverLambda" -o ./publish
-#           zip -r EmailServiceLambda.zip ./publish
+      - name: Publish Email Service Lambda Source Code 
+        run: |
+          dotnet publish -p "./source/EmailFailOverLambda/EmailFailOverLambda" -o ./publish
+          zip -r EmailServiceLambda.zip ./publish
 
-#       - name: Upload Lambda Artifact to GitHub Repository      
-#       - uses: actions/upload-artifact@v2
-#         with:
-#           name: EmailServiceLambda-1.0.0.zip
-#           path: ./EmailServiceLambda.zip
+      - name: Upload Lambda Artifact to GitHub Repository      
+        uses: actions/upload-artifact@v2
+        with:
+          name: EmailServiceLambda-1.0.0.zip
+          path: ./EmailServiceLambda.zip
