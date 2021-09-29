@@ -33,32 +33,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: EmailServiceLambda-1.0.0.zip
-          path: ./EmailServiceLambda.zip
-      
-  deploy_email_service_lambda:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Download Email Service Lambda Artifact
-        uses: actions/download-artifact@v2.0.10
-        with:
-          name: EmailServiceLambda-1.0.0.zip
-          path: ./infrastructure/deploy/lambda
-        
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-          
-      - name: Configure Terraform CLI
-        uses: hashicorp/setup-terraform@v1.2.1
-        with:
-          terraform_version: 0.14.6
-          
-      - name: Deploy Terraform Infrastructure
-        run: |
-          cd ./infrastructure/deploy
-          sh deploy.sh lambda
-    
+          path: ./EmailServiceLambda.zip    
