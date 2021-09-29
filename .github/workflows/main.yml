@@ -58,8 +58,8 @@ jobs:
             terraform_version: 0.14.6
 
         - name: Deploy Terraform Infrastructure
-          working-directory: ../infrastructure/deploy
+          working-directory: ./infrastructure/deploy
           run: |
             echo $PWD
-            sudo chmod +x deploy.sh
+            chmod +x "${GITHUB_WORKSPACE}/infrastructure/deploy/deploy.sh"
             sh deploy.sh lambda
