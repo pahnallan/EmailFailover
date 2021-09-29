@@ -28,7 +28,7 @@ variable "owner" {
 
 variable "file_name" {
   description       = "Path to the zipped package containing the lambda runtime code"
-  default           = "EmailServiceLambda.zip"
+  default           = "EmailServiceLambdaD.zip"
 }
 
 variable "lambda_sqs_policy_file_name" {
@@ -58,10 +58,12 @@ variable "memory_size" {
 
 variable "spend_grid_api_key" {
   description       = "API Key to access spend grid endpoint"
+  default           = ""
 }
 
 variable "snail_gun_api_key" {
   description       = "API Key to access spend grid endpoint"
+  default           = ""
 }
 
 ####################################################################################################
