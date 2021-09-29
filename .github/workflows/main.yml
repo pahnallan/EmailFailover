@@ -1,0 +1,34 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1.8.2
+
+      - name: Publish Email Service Lambda Source Code 
+        run: |
+          dotnet publish -p "./source/EmailFailOverLambda/EmailFailOverLambda" -o ./publish
+          zip -r EmailServiceLambda.zip ./publish
+
+      - name: Upload Lambda Artifact to GitHub Repository      
+      - uses: actions/upload-artifact@v2
+        with:
+          name: EmailServiceLambda-1.0.0.zip
+          path: ./EmailServiceLambda.zip
