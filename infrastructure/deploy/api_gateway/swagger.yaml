@@ -52,6 +52,10 @@
               "statusCode" : "200"
             }
           },
+          "requestParameters" : {
+            "integration.request.querystring.MessageBody" : "method.request.body",
+            "integration.request.querystring.Action" : "'SendMessage'"
+          },
           "passthroughBehavior" : "when_no_match"
         }
       }
