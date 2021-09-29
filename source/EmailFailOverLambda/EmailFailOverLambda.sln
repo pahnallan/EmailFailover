@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailFailOverLambda", "Emai
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailFailOverLambda.Tests", "EmailFailOverLambda.Tests\EmailFailOverLambda.Tests.csproj", "{FD9AA512-BAB7-47C2-BA8E-1A73B78C0C63}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ap.IntermediateEmailService", "Ap.IntermediateEmailClient\Ap.IntermediateEmailService.csproj", "{B237853D-2E93-4588-90DC-108820C49997}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ap.IntermediateEmailService.Tests", "Ap.IntermediateEmaileService.Tests\Ap.IntermediateEmailService.Tests.csproj", "{764C3DA2-074C-4062-BFAB-8AD078C4B410}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{FD9AA512-BAB7-47C2-BA8E-1A73B78C0C63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD9AA512-BAB7-47C2-BA8E-1A73B78C0C63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD9AA512-BAB7-47C2-BA8E-1A73B78C0C63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B237853D-2E93-4588-90DC-108820C49997}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B237853D-2E93-4588-90DC-108820C49997}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B237853D-2E93-4588-90DC-108820C49997}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B237853D-2E93-4588-90DC-108820C49997}.Release|Any CPU.Build.0 = Release|Any CPU
+		{764C3DA2-074C-4062-BFAB-8AD078C4B410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{764C3DA2-074C-4062-BFAB-8AD078C4B410}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{764C3DA2-074C-4062-BFAB-8AD078C4B410}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{764C3DA2-074C-4062-BFAB-8AD078C4B410}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

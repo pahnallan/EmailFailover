@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Ap.IntermediateEmailService.Models.Interfaces;
 using Newtonsoft.Json;
 
-namespace EmailFailOverLambda.Models
+namespace Ap.IntermediateEmailService.Models.IntermediateEmailClient
 {
     public class EmailApiRequest : IEmailApiRequest
     {

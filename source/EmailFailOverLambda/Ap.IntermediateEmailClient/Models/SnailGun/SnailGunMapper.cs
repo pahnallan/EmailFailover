@@ -1,4 +1,6 @@
-﻿namespace EmailFailOverLambda.Models
+﻿using Ap.IntermediateEmailService.Models.Interfaces;
+
+namespace Ap.IntermediateEmailService.Models.SnailGun
 {
     public class SnailGunMapper : IEmailMapper
     {

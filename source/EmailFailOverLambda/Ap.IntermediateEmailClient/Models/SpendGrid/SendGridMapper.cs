@@ -1,4 +1,6 @@
-﻿namespace EmailFailOverLambda.Models
+﻿using Ap.IntermediateEmailService.Models.Interfaces;
+
+namespace Ap.IntermediateEmailService.Models.SpendGrid
 {
     public class SendGridMapper : IEmailMapper
     {

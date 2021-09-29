@@ -1,4 +1,4 @@
-﻿namespace EmailFailOverLambda.Models
+﻿namespace Ap.IntermediateEmailClient.Models.Enums
 {
     public enum EmailProviders
     {

@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 using Amazon.Lambda.Core;
 using Amazon.Lambda.SQSEvents;
-using EmailFailOverLambda.Models;
-using EmailFailOverLambda.Service;
+using Ap.IntermediateEmailService.Models.IntermediateEmailClient;
+using Ap.IntermediateEmailService.Services;
 using Newtonsoft.Json;
 
 
@@ -21,9 +21,7 @@ namespace EmailFailOverLambda
         private readonly string _spendGridApiKey = Environment.GetEnvironmentVariable("SpendGridApiKey");
         private readonly string _snailGunApiKey = Environment.GetEnvironmentVariable("SnailGunApiKey");
         private readonly string _activeEmailProvider = Environment.GetEnvironmentVariable("ActiveEmailProvider");
-
-        private readonly EmailService _spendGridClient;
-        private readonly EmailService _snailGunClient;
+        
 
         /// <summary>
         /// Default constructor. This constructor is used by Lambda to construct the instance. When invoked in a Lambda environment
@@ -32,8 +30,7 @@ namespace EmailFailOverLambda
         /// </summary>
         public Function()
         {
-            _spendGridClient = new EmailService(_spendGridUrl, _spendGridApiKey, new SendGridMapper());
-            _snailGunClient = new EmailService(_snailGunUrl, _snailGunApiKey, new SnailGunMapper());
+
         }
 
 
@@ -46,7 +43,7 @@ namespace EmailFailOverLambda
         /// <returns></returns>
         public async Task<EmailApiResponse> FunctionHandler(SQSEvent evnt, ILambdaContext context)
         {
-            // Limiting the messages to just one in the API
+            // Limiting the batch messages to just 1 in the lambda batching for now. 
             foreach(var message in evnt.Records)
             {
                 await ProcessMessageAsync(message, context);
@@ -54,7 +51,8 @@ namespace EmailFailOverLambda
 
             var response = new EmailApiResponse
             {
-                Id = evnt.Records.FirstOrDefault()?.MessageId
+                RequestId = context.AwsRequestId,
+                MessageId = evnt.Records.FirstOrDefault()?.MessageId
             };
             return response;
         }
@@ -65,8 +63,8 @@ namespace EmailFailOverLambda
             try
             {
                 var requestMessage = JsonConvert.DeserializeObject<EmailApiRequest>(message.Body);
-                EmailService emailService = GetEmailService(_activeEmailProvider, context);
 
+                var emailService = new IntermediateEmailService(_spendGridUrl, _spendGridApiKey, _snailGunUrl, _snailGunApiKey, _activeEmailProvider);
                 var response = await emailService.SendEmailAsync(requestMessage, context);
                 if (!response.IsSuccessful)
                 {
@@ -80,21 +78,6 @@ namespace EmailFailOverLambda
             {
                 context.Logger.LogLine(e.ToString());
                 throw;
-            }
-        }
-
-        private EmailService GetEmailService(string emailProvider, ILambdaContext context)
-        {
-            Enum.TryParse(Environment.GetEnvironmentVariable("ActiveEmailProvider"), out EmailProviders activeEmailProvider);
-            context.Logger.LogLine($"Retrieving {activeEmailProvider} email client...");
-            switch (activeEmailProvider)
-            {
-                case EmailProviders.SpendGrid:
-                    return _spendGridClient;
-                case EmailProviders.SnailGun:
-                    return _snailGunClient;
-                default:
-                    throw new NotImplementedException($"Email Provider {emailProvider} is not implemented.");
             }
         }
     }

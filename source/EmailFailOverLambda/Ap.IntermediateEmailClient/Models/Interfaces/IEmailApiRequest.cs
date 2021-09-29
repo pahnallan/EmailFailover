@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace EmailFailOverLambda.Models
+namespace Ap.IntermediateEmailService.Models.Interfaces
 {
     public interface IEmailApiRequest
     {

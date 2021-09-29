@@ -1,4 +1,4 @@
-﻿namespace EmailFailOverLambda.Service
+﻿namespace Ap.IntermediateEmailService.Services.Interfaces
 {
     interface IApiKeyAuthentication
     {

@@ -1,4 +1,4 @@
-﻿namespace EmailFailOverLambda.Models
+﻿namespace Ap.IntermediateEmailService.Models.SpendGrid
 {
     public class SpendGridResponse
     {

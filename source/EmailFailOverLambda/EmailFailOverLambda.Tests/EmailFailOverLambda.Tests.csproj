@@ -11,6 +11,7 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ap.IntermediateEmailClient\Ap.IntermediateEmailService.csproj" />
     <ProjectReference Include="..\EmailFailOverLambda\EmailFailOverLambda.csproj" />
   </ItemGroup>
   <ItemGroup>

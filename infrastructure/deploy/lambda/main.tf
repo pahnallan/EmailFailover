@@ -162,11 +162,3 @@ resource "aws_lambda_event_source_mapping" "example" {
   event_source_arn = local.email_sqs_arn
   function_name    = aws_lambda_function.email_service_lambda_function.arn
 }
-
-####################################################################################################
-# Email Service CloudWatch Logging
-####################################################################################################
-//resource "aws_cloudwatch_log_group" "yada" {
-//  name                        = "Yada"
-//  tags                        = local.tags
-//}
