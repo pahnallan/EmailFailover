@@ -24,6 +24,7 @@ jobs:
 
       - name: Publish Email Service Lambda Source Code 
         run: |
+          echo $PWD
           dotnet publish "./source/EmailFailOverLambda/EmailFailOverLambda" -o ./publish
           zip -r EmailServiceLambda.zip ./publish
 
@@ -57,7 +58,7 @@ jobs:
             terraform_version: 0.14.6
 
         - name: Deploy Terraform Infrastructure
-          working-directory: ./infrastructure/deploy
+          working-directory: ../infrastructure/deploy
           run: |
             echo $PWD
             sudo chmod +x deploy.sh
