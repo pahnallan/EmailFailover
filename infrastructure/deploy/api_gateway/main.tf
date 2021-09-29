@@ -5,10 +5,8 @@ terraform {
 ####################################################################################################
 # Terraform Variables
 ####################################################################################################
-
 variable "region" {
   description       = "AWS Region"
-  type              = "string"
   default           = "us-west-2"
 }
 
@@ -37,12 +35,15 @@ variable "sqs_policy_file_name" {
   default           = "policies/api-gateway-sqs-policy.json"
 }
 
+variable "stage_name" {
+  description       = "Name of the stage of which the API is deployed to"
+  default           = "api"
+}
+
 ####################################################################################################
 # Terraform Existing Data Resources Reference
 ####################################################################################################
 data "aws_caller_identity" "current" {}
-
-data "aws_iam_account_alias" "current" {}
 
 ####################################################################################################
 # Terraform Providers
@@ -60,6 +61,7 @@ locals {
   api_role_policy_name   = lower(join("-", [var.product, "sqs-policy", var.environment]))
   api_policy_attachment_name = lower(join("-", [var.product, "sqs-policy-attachment", var.environment]))
   parsed_spec       = yamldecode(file("./${var.openapi_spec}"))
+  client_api_access = lower(join("-", [var.product, "client-api-access", var.environment]))
 
   email_sqs_arn                 = "arn:aws:sqs:${var.region}:${data.aws_caller_identity.current.account_id}:${lower(join("-", [var.product, "queue", var.environment]))}"
   email_sqs_name                  = lower(join("-", [var.product, "queue", var.environment]))
@@ -91,7 +93,7 @@ resource "aws_iam_role" "iam_role" {
 }
 
 resource "aws_iam_policy" "sqs_access_policy"{
-  policy_name                   = local.api_role_policy_name
+  name                   = local.api_role_policy_name
   description                   = "Policy for KMS."
   policy      = templatefile ("./${var.sqs_policy_file_name}", {
     resource_arn = local.email_sqs_arn
@@ -100,12 +102,12 @@ resource "aws_iam_policy" "sqs_access_policy"{
 
 resource "aws_iam_policy_attachment" "api_gateway_iam_role_sqs_policy_attachment"{
   name                          = local.api_policy_attachment_name
-  role                          = aws_iam_role.iam_role.name
+  roles                         = [aws_iam_role.iam_role.name]
   policy_arn                    = aws_iam_policy.sqs_access_policy.arn
 }
 
 ####################################################################################################
-# API Gateway with Logging
+# API Gateway
 ####################################################################################################
 resource "aws_api_gateway_rest_api" "email_service_gateway_rest_api" {
   name                          = local.api_name
@@ -120,4 +122,42 @@ resource "aws_api_gateway_rest_api" "email_service_gateway_rest_api" {
     types = ["EDGE"] # TODO: switch this to regional when implementing a region based fail-over
   }
   tags                          = local.tags
+}
+
+# API Gateway Stage Deployment
+resource "aws_api_gateway_deployment" "email_service_gateway_deployment" {
+  rest_api_id       = aws_api_gateway_rest_api.email_service_gateway_rest_api.id
+  stage_description = "Deployed at: ${timestamp()}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_api_gateway_stage" "email_service_gateway_stage" {
+  stage_name = var.stage_name
+  rest_api_id = aws_api_gateway_rest_api.email_service_gateway_rest_api.id
+  deployment_id = aws_api_gateway_deployment.email_service_gateway_deployment.id
+  tags = local.tags
+}
+
+# API Gateway API Key
+resource "aws_api_gateway_api_key" "api_key" {
+  name = local.client_api_access
+}
+
+# API Gateway Usage Plan and Plan Key
+resource "aws_api_gateway_usage_plan" "usage_plan" {
+  name = local.client_api_access
+
+  api_stages {
+    api_id = aws_api_gateway_rest_api.email_service_gateway_rest_api.id
+    stage  = var.stage_name
+  }
+}
+
+resource "aws_api_gateway_usage_plan_key" "plan_key" {
+  key_id        = aws_api_gateway_api_key.api_key.id
+  key_type      = "API_KEY"
+  usage_plan_id = aws_api_gateway_usage_plan.usage_plan.id
 }
