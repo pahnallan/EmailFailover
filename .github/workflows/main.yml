@@ -66,4 +66,5 @@ jobs:
             export TF_VAR_spend_grid_api_key="${{secrets.SPEND_GRID_API_KEY}}"
             export TF_VAR_snail_gun_api_key="${{secrets.SNAIL_GUN_API_KEY}}"
             chmod +x deploy.sh
+            chmod +x ./lambda/EmailServiceLambda.zip
             sh deploy.sh lambda
