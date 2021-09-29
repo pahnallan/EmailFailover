@@ -68,8 +68,12 @@
     "schemas" : {
       "EmailApiResponse" : {
         "type" : "object",
+        "required" : [ "RequestId", "MessageId" ],
         "properties" : {
-          "Id" : {
+          "RequestId" : {
+            "type" : "string"
+          },
+          "MessageId" : {
             "type" : "string"
           }
         }
