@@ -57,8 +57,7 @@ jobs:
             terraform_version: 0.14.6
 
         - name: Deploy Terraform Infrastructure
+          working-directory: ./infrastructure/deploy
           run: |
-            cd ./infrastructure/deploy
-            ls -p | grep -v /
             chmod +x deploy.sh
-            //sh deploy.sh lambda
+            sh deploy.sh lambda
