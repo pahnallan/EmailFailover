@@ -63,5 +63,7 @@ jobs:
         - name: Deploy Terraform Infrastructure
           working-directory: ./infrastructure/deploy
           run: |
+            export TF_VAR_spend_grid_api_key="${{secrets.SPEND_GRID_API_KEY}}"
+            export TF_VAR_snail_gun_api_key="${{secrets.SNAIL_GUN_API_KEY}}"
             chmod +x deploy.sh
             sh deploy.sh lambda
