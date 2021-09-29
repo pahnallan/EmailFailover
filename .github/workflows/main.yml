@@ -26,13 +26,13 @@ jobs:
         run: |
           echo $PWD
           dotnet publish "./source/EmailFailOverLambda/EmailFailOverLambda" -o ./publish
-          zip -r EmailServiceLambda.zip ./publish/*
+          //zip -r EmailServiceLambda.zip ./publish/*
 
       - name: Upload Lambda Artifact to GitHub Repository      
         uses: actions/upload-artifact@v2
         with:
           name: EmailServiceLambda-1.0.0.zip
-          path: ./EmailServiceLambda.zip    
+          path: ./publish/*
           
   deploy_email_service_lambda:
       runs-on: ubuntu-latest
