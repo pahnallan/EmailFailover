@@ -49,7 +49,10 @@
           "uri" : "arn:aws:apigateway:${region}:sqs:path/${account_id}/${email_sqs_name}",
           "responses" : {
             "default" : {
-              "statusCode" : "200"
+              "statusCode" : "200",
+              "responseTemplates" : {
+                "application/json" : "#set($inputRoot = $input.path('$'))\n\n{\n    \"RequestId\": \"$inputRoot.SendMessageResponse.ResponseMetadata.RequestId\",\n    \"MessageId\": \"$inputRoot.SendMessageResponse.SendMessageResult.MessageId\"\n}"
+              }
             }
           },
           "requestParameters" : {
