@@ -139,7 +139,7 @@ resource "aws_iam_role_policy_attachment" "api_gateway_iam_role_basic_lambda_pol
 ####################################################################################################
 resource "aws_lambda_function" "email_service_lambda_function" {
   filename                    = var.file_name
-  source_code_hash            = filebase64sha256(var.file_name)
+  source_code_hash            = "TestHashToDebugGitHubActionFailure"//filebase64sha256(var.file_name)
   function_name               = local.function_name
   role                        = aws_iam_role.email_service_iam_role.arn
   handler                     = var.handler_name
