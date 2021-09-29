@@ -73,6 +73,7 @@
       },
       "EmailApiRequest" : {
         "type" : "object",
+        "required" : [ "to", "to_name", "from", "from_name", "subject", "body" ],
         "properties" : {
           "to" : {
             "type" : "string"
