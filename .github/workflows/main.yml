@@ -45,7 +45,7 @@ jobs:
           uses: actions/download-artifact@v2.0.10
           with:
             name: EmailServiceLambda-1.0.0.zip
-            path: ./infrastructure/deploy/lambda/EmailServiceLambda.zip
+            path: ./infrastructure/deploy/lambda/
 
         - name: Configure AWS Credentials
           uses: aws-actions/configure-aws-credentials@v1
@@ -64,6 +64,7 @@ jobs:
           run: |
             export TF_VAR_spend_grid_api_key="${{secrets.SPEND_GRID_API_KEY}}"
             export TF_VAR_snail_gun_api_key="${{secrets.SNAIL_GUN_API_KEY}}"
+            export TF_VAR_file_name="EmailServiceLambda-1.0.0.zip"
             chmod +x deploy.sh
-            chmod +x ./lambda/EmailServiceLambda.zip
+            chmod +x ./lambda/EmailServiceLambda-1.0.0.zip
             sh deploy.sh lambda
