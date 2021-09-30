@@ -6,7 +6,7 @@
     "version" : "1.0.0"
   },
   "servers" : [ {
-    "url" : "https://qidbya79aj.execute-api.us-west-2.amazonaws.com/{basePath}",
+    "url" : "https://luvc7m2fsd.execute-api.us-west-2.amazonaws.com/{basePath}",
     "variables" : {
       "basePath" : {
         "default" : "/api"
