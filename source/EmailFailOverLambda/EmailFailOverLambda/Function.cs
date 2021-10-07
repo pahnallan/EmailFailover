@@ -44,10 +44,16 @@ namespace EmailFailOverLambda
         public async Task<EmailApiResponse> FunctionHandler(SQSEvent evnt, ILambdaContext context)
         {
             // Limiting the batch messages to just 1 in the lambda batching for now. 
+            // TODO: Add solution to handle partial batch failures
             var message = evnt.Records.FirstOrDefault();
             var requestMessage = JsonConvert.DeserializeObject<EmailApiRequest>(message.Body);
             var response = await ProcessMessageAsync(requestMessage, context);
-            // TODO: Add logging to response?
+            // TODO: Add response logging for continued monitoring/analytics
+            if (response.Status != "Success")
+            {
+                // Throw an exception so that the sqs message does not get deleted on success.
+                throw new Exception($"SQS Message failed to process with the following error response: {response.Status},{response.Message},{response.RequestId}");
+            }
             return response;
         }
 
@@ -61,7 +67,7 @@ namespace EmailFailOverLambda
         public async Task<EmailApiResponse> FunctionHandler(EmailApiRequest emailApiRequest, ILambdaContext context)
         {
             var response = await ProcessMessageAsync(emailApiRequest, context);
-            // TODO: Add logging to response?
+            // TODO: Add response logging for continued monitoring/analytics
             return response;
         }
 
@@ -75,7 +81,7 @@ namespace EmailFailOverLambda
                 {
                     return new EmailApiResponse
                     {
-                        Status = "BadRequest",
+                        Status = "BadRequest", // TODO: Create Status Code Enums
                         Message = string.Join(" ", validationErrors),
                         RequestId = context.AwsRequestId
                     };
@@ -85,7 +91,7 @@ namespace EmailFailOverLambda
                 var response = await emailService.SendEmailAsync(requestMessage, context);
                 if (!response.IsSuccessful)
                 {
-                    // Third party email provider was not reachable so our api is also unavailable.
+                    // Third party email provider was not reachable so our api is also unavailable. Return Service Unavailable.
                     return new EmailApiResponse
                     {
                         Status = "ServiceUnavailable",
@@ -99,7 +105,7 @@ namespace EmailFailOverLambda
                 return new EmailApiResponse
                 {
                     Status = "Success",
-                    Message = "Successfully Sent Email.",
+                    Message = "Successfully sent Email.",
                     RequestId = context.AwsRequestId
                 };
             }

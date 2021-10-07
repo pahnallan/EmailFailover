@@ -14,6 +14,8 @@ namespace EmailFailOverLambda.Tests
 {
     public class FunctionTest
     {
+        // TODO: Add Mock Email Provider to test against.
+        // TODO: Add unit tests for new synchronous handler in lambda (include testing of response codes)
         private readonly ITestOutputHelper _testOutputHelper;
         private TestLambdaLogger TestLogger { get; set; }
         private TestLambdaContext TestContext { get; set; }
