@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using Ap.IntermediateEmailClient.Models.Enums;
 using Ap.IntermediateEmailService.Models.Interfaces;
+using Ap.IntermediateEmailService.Models.IntermediateEmailClient;
 using Ap.IntermediateEmailService.Models.SnailGun;
 using Ap.IntermediateEmailService.Models.SpendGrid;
 using Ap.IntermediateEmailService.Services.Interfaces;
@@ -75,6 +79,39 @@ namespace Ap.IntermediateEmailService.Services
                 default:
                     throw new NotImplementedException($"Email Provider {CurrentActiveEmailProvider} is not implemented.");
             }
+        }
+
+        public static List<string> ValidateEmailApiRequest(IEmailApiRequest emailApiRequest)
+        {
+            var validationErrors = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(emailApiRequest.From) || !IsValidEmail(emailApiRequest.From))
+            {
+                validationErrors.Add("Please enter a valid email address in the From request field.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(emailApiRequest.To) || !IsValidEmail(emailApiRequest.To))
+            {
+                validationErrors.Add("Please enter a valid email address in the To request field.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(emailApiRequest.Subject) )
+            {
+                validationErrors.Add("Subject field may not be empty.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(emailApiRequest.Body))
+            {
+                validationErrors.Add("Body field may not be empty.");
+            }
+
+            return validationErrors;
+        }
+
+        private static bool IsValidEmail(string emailAddress)
+        {
+            EmailAddressAttribute e = new EmailAddressAttribute();
+            return e.IsValid(emailAddress);
         }
     }
 }

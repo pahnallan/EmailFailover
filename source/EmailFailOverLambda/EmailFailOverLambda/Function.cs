@@ -44,40 +44,75 @@ namespace EmailFailOverLambda
         public async Task<EmailApiResponse> FunctionHandler(SQSEvent evnt, ILambdaContext context)
         {
             // Limiting the batch messages to just 1 in the lambda batching for now. 
-            foreach(var message in evnt.Records)
-            {
-                await ProcessMessageAsync(message, context);
-            }
+            var message = evnt.Records.FirstOrDefault();
+            var requestMessage = JsonConvert.DeserializeObject<EmailApiRequest>(message.Body);
+            var response = await ProcessMessageAsync(requestMessage, context);
+            // TODO: Add logging to response?
+            return response;
+        }
 
-            var response = new EmailApiResponse
-            {
-                RequestId = context.AwsRequestId,
-                MessageId = evnt.Records.FirstOrDefault()?.MessageId
-            };
+        /// <summary>
+        /// This method is called for every Lambda invocation. This method takes in an SQS event object and can be used 
+        /// to respond to SQS messages.
+        /// </summary>
+        /// <param name="emailApiRequest"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public async Task<EmailApiResponse> FunctionHandler(EmailApiRequest emailApiRequest, ILambdaContext context)
+        {
+            var response = await ProcessMessageAsync(emailApiRequest, context);
+            // TODO: Add logging to response?
             return response;
         }
 
         // No need to explicitly delete the message from the queue as AWS automatically deletes it when the lambda returns success
-        private async Task ProcessMessageAsync(SQSEvent.SQSMessage message, ILambdaContext context)
+        private async Task<EmailApiResponse> ProcessMessageAsync(EmailApiRequest requestMessage, ILambdaContext context)
         {
             try
             {
-                var requestMessage = JsonConvert.DeserializeObject<EmailApiRequest>(message.Body);
+                var validationErrors = IntermediateEmailService.ValidateEmailApiRequest(requestMessage);
+                if (validationErrors.Any())
+                {
+                    return new EmailApiResponse
+                    {
+                        Status = "BadRequest",
+                        Message = string.Join(" ", validationErrors),
+                        RequestId = context.AwsRequestId
+                    };
+                }
 
                 var emailService = new IntermediateEmailService(_spendGridUrl, _spendGridApiKey, _snailGunUrl, _snailGunApiKey, _activeEmailProvider);
                 var response = await emailService.SendEmailAsync(requestMessage, context);
                 if (!response.IsSuccessful)
                 {
-                    throw response.ErrorException;
+                    // Third party email provider was not reachable so our api is also unavailable.
+                    return new EmailApiResponse
+                    {
+                        Status = "ServiceUnavailable",
+                        Message = response.ErrorException.Message,
+                        RequestId = context.AwsRequestId
+                    };
                 }
 
-
                 context.Logger.LogLine($"{response.StatusCode},{response.Content}");
+
+                return new EmailApiResponse
+                {
+                    Status = "Success",
+                    Message = "Successfully Sent Email.",
+                    RequestId = context.AwsRequestId
+                };
             }
             catch (Exception e)
             {
                 context.Logger.LogLine(e.ToString());
-                throw;
+
+                return new EmailApiResponse
+                {
+                    Status = "InternalError",
+                    Message = "The server ran into an error while processing the request.",
+                    RequestId = context.AwsRequestId
+                };
             }
         }
     }

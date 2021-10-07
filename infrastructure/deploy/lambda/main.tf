@@ -26,14 +26,14 @@ variable "owner" {
   default           = "Allan Pahn"
 }
 
-variable "file_name" {
-  description       = "Path to the zipped package containing the lambda runtime code"
-  default           = "EmailServiceLambda.zip"
-}
-
 variable "lambda_sqs_policy_file_name" {
   description       = "Name of the file which contains the policy template for allowing the lambda access to SQS"
   default           = "policies/lambda-sqs-policy.json"
+}
+
+variable "file_name" {
+  description       = "Path to the zipped package containing the lambda runtime code"
+  default           = "EmailServiceLambda.zip"
 }
 
 variable "handler_name" {
