@@ -85,22 +85,22 @@ namespace Ap.IntermediateEmailService.Services
         {
             var validationErrors = new List<string>();
 
-            if (!string.IsNullOrWhiteSpace(emailApiRequest.From) || !IsValidEmail(emailApiRequest.From))
+            if (string.IsNullOrWhiteSpace(emailApiRequest.From) || !IsValidEmail(emailApiRequest.From))
             {
                 validationErrors.Add("Please enter a valid email address in the From request field.");
             }
 
-            if (!string.IsNullOrWhiteSpace(emailApiRequest.To) || !IsValidEmail(emailApiRequest.To))
+            if (string.IsNullOrWhiteSpace(emailApiRequest.To) || !IsValidEmail(emailApiRequest.To))
             {
                 validationErrors.Add("Please enter a valid email address in the To request field.");
             }
 
-            if (!string.IsNullOrWhiteSpace(emailApiRequest.Subject) )
+            if (string.IsNullOrWhiteSpace(emailApiRequest.Subject) )
             {
                 validationErrors.Add("Subject field may not be empty.");
             }
 
-            if (!string.IsNullOrWhiteSpace(emailApiRequest.Body))
+            if (string.IsNullOrWhiteSpace(emailApiRequest.Body))
             {
                 validationErrors.Add("Body field may not be empty.");
             }
